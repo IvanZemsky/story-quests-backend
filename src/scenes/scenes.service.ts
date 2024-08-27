@@ -11,6 +11,7 @@ export class ScenesService {
    ) {}
 
    async getScenesByStoryId(storyId: string) {
-      return this.scenesRepository.find({storyId}).exec()
+      const scenes = await this.scenesRepository.find({storyId})
+      return scenes
    }
 }
