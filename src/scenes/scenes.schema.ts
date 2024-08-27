@@ -3,6 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import mongoose, { HydratedDocument } from "mongoose";
 import { IScene } from "src/story/types/types";
 
+//
 @Schema({collection: 'scenes'})
 export class Scenes {
    @ApiProperty({description: 'Уникальный идентификатор истории'})
