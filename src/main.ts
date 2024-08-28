@@ -4,7 +4,9 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
   const PORT = process.env.PORT
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: true
+  });
 
   const config = new DocumentBuilder()
     .setTitle("REST API для веб-приложений StoryQuests")
