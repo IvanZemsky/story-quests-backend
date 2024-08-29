@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
-import { Scenes } from "./scenes.schema";
+import { Scene } from "./scene.schema";
 import { Model } from "mongoose";
 
 @Injectable()
-export class ScenesService {
+export class SceneService {
    constructor(
-      @InjectModel(Scenes.name)
-      private scenesRepository: Model<Scenes>
+      @InjectModel(Scene.name)
+      private sceneRepository: Model<Scene>
    ) {}
 
    async getScenesByStoryId(storyId: string) {
-      const scenes = await this.scenesRepository.findOne({storyId})
+      const scenes = await this.sceneRepository.find({storyId})
       return scenes
    }
 }

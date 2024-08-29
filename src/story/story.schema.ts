@@ -35,10 +35,8 @@ export class Story {
 
   @ApiProperty({
     example: {
-      author: {
-        _id: '66ce2c4032fe1d5479a70ea4',
-        name: 'Curry',
-      },
+      _id: '66ce2c4032fe1d5479a70ea4',
+      name: 'Curry',
     },
     description: 'id автора истории',
   })

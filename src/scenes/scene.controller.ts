@@ -1,16 +1,16 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ScenesService } from './scenes.service';
+import { SceneService } from './scene.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Scenes } from './scenes.schema';
+import { Scene } from './scene.schema';
 
 @Controller('scenes')
-export class ScenesController {
-  constructor(private scenesService: ScenesService) {}
+export class SceneController {
+  constructor(private sceneService: SceneService) {}
 
   @ApiOperation({ summary: 'Получение сцен для истории по id истории' })
-  @ApiResponse({ status: 200, type: Scenes })
+  @ApiResponse({ status: 200, type: Scene })
   @Get()
   getScenesByStoryId(@Query('storyId') storyId: string) {
-    return this.scenesService.getScenesByStoryId(storyId);
+    return this.sceneService.getScenesByStoryId(storyId);
   }
 }
