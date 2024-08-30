@@ -1,12 +1,2 @@
-import { IAnswer } from "src/scenes/types/types"
-
-export type SceneType = "default" | "end"
-
-export interface IScene {
-   id: string
-   title: string
-   description: string
-   img: string | undefined
-   type: SceneType
-   answers: IAnswer[]
-}
+export type SortByScenesAmount = "" | "short" | "medium" | "long"
+export type SortByFilter = "" | "best" | "popular" | "new"

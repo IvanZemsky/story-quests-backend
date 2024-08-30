@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { StoryModule } from './story/story.module';
-import { ScenesModule } from './scenes/scene.module';
+import { ScenesModule } from './scene/scene.module';
 import { UserModule } from './user/user.module';
 
 @Module({

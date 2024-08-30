@@ -41,6 +41,13 @@ export class Scene {
   description: string;
 
   @ApiProperty({
+    description: 'Тип сцены',
+    example: 'default',
+  })
+  @Prop()
+  type: string;
+
+  @ApiProperty({
     description: 'Ссылка на иллюстрацию',
     example: 'https://images.unsplash.com/photo-123',
   })
