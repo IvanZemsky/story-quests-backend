@@ -46,6 +46,14 @@ export class Story {
   @ApiProperty({ example: '18', description: 'Количество сцен' })
   @Prop()
   sceneCount: number;
+
+  @ApiProperty({ example: '500', description: 'Количество прохождений' })
+  @Prop()
+  passes: number;
+
+  @ApiProperty({ example: '2024-08-25T10:03:46.000+00:00', description: 'Дата создания истории' })
+  @Prop()
+  date: string;
 }
 
 export type StoryDocument = HydratedDocument<Story>;
