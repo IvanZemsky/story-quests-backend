@@ -1,8 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Story } from './story.schema';
 import { Model, QueryOptions } from 'mongoose';
-import { SortByFilter, SortByScenesAmount } from "./types/types";
-import { setSortByLength } from "./helpers/setSortByLength";
+import { OrderByFilter, SortByScenesAmount } from './types/types';
+import { setSortByLength } from './helpers/setSortByLength';
+import { setOrderByFilter } from "./helpers/setOrderByFilter";
 
 export class StoryService {
   constructor(
@@ -15,23 +16,40 @@ export class StoryService {
     page: number,
     search: string,
     length: SortByScenesAmount,
-    filter: SortByFilter
+    order: OrderByFilter,
   ): Promise<Story[]> {
+    const query = this.setQuery(search, length);
+
+    const sort = setOrderByFilter(order)
+
+    const stories = await this.storyModel
+      .find(query)
+      .sort(sort)
+      .skip(page * limit)
+      .limit(limit)
+      .populate('author', 'login');
+
+    return stories;
+  }
+
+  async getStoryCount(
+    search: string,
+    length: SortByScenesAmount,
+  ): Promise<number> {
+    const query = this.setQuery(search, length);
+
+    return await this.storyModel.countDocuments(query).exec();
+  }
+
+  private setQuery(search: string, length: SortByScenesAmount): QueryOptions {
     const sceneCountQuery = setSortByLength(length);
 
-    const query: QueryOptions = {
+    return {
       $or: [
         { description: { $regex: search, $options: 'i' } },
         { name: { $regex: search, $options: 'i' } },
       ],
       ...(sceneCountQuery && { sceneCount: sceneCountQuery }),
     };
-
-    const stories = await this.storyModel
-      .find(query)
-      .skip(page * limit)
-      .limit(limit)
-      .populate('author', 'login');
-    return stories;
   }
 }
