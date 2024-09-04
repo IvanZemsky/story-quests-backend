@@ -41,6 +41,8 @@ export class StoryController {
     const count = await this.storyService.getStoryCount(search, length);
 
     res.setHeader('X-Total-Count', count);
+    res.setHeader('Access-Control-Expose-Headers', 'X-Total-Count');
+    
     return res.json(stories);
   }
 }
