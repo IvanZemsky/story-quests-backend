@@ -8,9 +8,9 @@ export const setOrderByFilter = (order: OrderByFilter): QueryOptions => {
     case 'new':
       return { date: -1 };
     case 'popular':
-      return { passes: 1 };
+      return { passes: -1 };
     case 'best':
-      return { likes: 1 };
+      return { likes: -1 };
     default:
       return undefined
   }
