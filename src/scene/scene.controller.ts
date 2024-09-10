@@ -1,8 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { SceneService } from './scene.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Scene } from './scene.schema';
 
+@ApiTags("Сцены")
 @Controller('scenes')
 export class SceneController {
   constructor(private sceneService: SceneService) {}

@@ -1,10 +1,11 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { StoryService } from './story.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Story } from './story.schema';
 import { OrderByFilter, SortByScenesAmount } from './types/types';
 import { Response } from 'express';
 
+@ApiTags("Истории")
 @Controller('stories')
 export class StoryController {
   constructor(private storyService: StoryService) {}

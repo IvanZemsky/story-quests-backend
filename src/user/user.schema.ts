@@ -1,14 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import mongoose, { HydratedDocument } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-@Schema({ collection: 'users' })
+@Schema({ collection: 'users', versionKey: false })
 export class User {
   @ApiProperty({
     example: '66cb6fb8ebae2e4b8fffd190',
     description: 'Уникальный идентификатор',
   })
-  private _id: string;
+  _id: string;
 
   @ApiProperty({
     example: 'Curry',
@@ -20,10 +20,6 @@ export class User {
   @ApiProperty({ example: '123456', description: 'Пароль' })
   @Prop()
   password: string;
-
-  @ApiProperty({ example: '18', description: 'Количество сцен' })
-  @Prop({ type: mongoose.Schema.Types.Date })
-  registrationDate: string;
 }
 
 export type UserDocument = HydratedDocument<User>;

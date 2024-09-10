@@ -4,7 +4,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { IAnswer } from "./types/types";
 import { answersExample } from "./docs/docs";
 
-@Schema({ collection: 'scenes' })
+@Schema({ collection: 'scenes', versionKey: false })
 export class Scene {
   @ApiProperty({
     description: 'Уникальный идентификатор сцены в базе данных',

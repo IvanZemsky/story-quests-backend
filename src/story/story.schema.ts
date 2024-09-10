@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from 'src/user/user.schema';
 
-@Schema({ collection: 'stories' })
+@Schema({ collection: 'stories', versionKey: false  })
 export class Story {
   @ApiProperty({
     example: '66cb6fb8ebae2e4b8fffd190',
