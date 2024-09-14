@@ -32,12 +32,16 @@ export class StoryService {
     return stories;
   }
 
+  async getStoryById(id: string) {
+    const story = await this.storyModel.findById(id)
+    return story
+  }
+
   async getStoryCount(
     search: string,
     length: SortByScenesAmount,
   ): Promise<number> {
     const query = this.setQuery(search, length);
-
     return await this.storyModel.countDocuments(query).exec();
   }
 
