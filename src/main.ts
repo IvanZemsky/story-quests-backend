@@ -8,6 +8,12 @@ async function bootstrap() {
     cors: true
   });
 
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   const config = new DocumentBuilder()
     .setTitle("REST API для веб-приложений StoryQuests")
     .build()
