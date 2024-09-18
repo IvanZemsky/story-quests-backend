@@ -15,7 +15,7 @@ export class Story {
     example: 'Mystery of the Ancient Temple',
     description: 'Имя истории',
   })
-  @Prop()
+  @Prop({required: true})
   name: string;
 
   @ApiProperty({
@@ -23,14 +23,14 @@ export class Story {
       'You embarked on an expedition to explore a mysterious ancient temple filled with secrets and dangers.',
     description: 'Описание истории',
   })
-  @Prop()
+  @Prop({required: true})
   description: string;
 
   @ApiProperty({
     example: 'https://images.unsplash.com/photo-123',
     description: 'Ссылка на изображение',
   })
-  @Prop()
+  @Prop({required: true})
   img: string;
 
   @ApiProperty({
@@ -40,7 +40,7 @@ export class Story {
     },
     description: 'id автора истории',
   })
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true})
   author: User;
 
   @ApiProperty({ example: '18', description: 'Количество сцен' })
@@ -52,7 +52,7 @@ export class Story {
   passes: number;
 
   @ApiProperty({ example: '2024-08-25T10:03:46.000+00:00', description: 'Дата создания истории' })
-  @Prop()
+  @Prop({required: true})
   date: string;
 }
 
