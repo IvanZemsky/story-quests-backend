@@ -5,9 +5,7 @@ import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const PORT = process.env.PORT
-  const app = await NestFactory.create(AppModule, {
-    cors: true
-  });
+  const app = await NestFactory.create(AppModule);
 
   const allowedOrigins = ['http://localhost:3000', 'https://story-quests.vercel.app']
 
