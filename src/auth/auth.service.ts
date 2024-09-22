@@ -15,7 +15,7 @@ export class AuthService {
   async registration(userDto: CreateUserDto) {
     const candidate = await this.userService.getUserByLogin(userDto.login)
     if (candidate) {
-       throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST)
+       throw new HttpException('User with provided login already exists', HttpStatus.BAD_REQUEST)
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5)
     const user = await this.userService.createUser({login: userDto.login, password: hashPassword})
@@ -38,7 +38,7 @@ export class AuthService {
     const user = await this.userService.getUserByLogin(userDto.login);
 
     if (!user) {
-      throw new UnauthorizedException({ message: 'Неверный login или пароль' });
+      throw new UnauthorizedException({ message: 'Incorrect login or password' });
     }
 
     const passwordEquals = await bcrypt.compare(
@@ -50,6 +50,6 @@ export class AuthService {
       return user;
     }
 
-    throw new UnauthorizedException({ message: 'Неверный login или пароль' });
+    throw new UnauthorizedException({ message: 'Incorrect login or password' });
   }
 }
