@@ -14,4 +14,9 @@ export class SceneService {
       const scenes = await this.sceneRepository.find({storyId})
       return scenes
    }
+
+   async getScene(storyId: string, nextSceneId: string) {
+      const scene = await this.sceneRepository.findOne({storyId, sceneId: nextSceneId})
+      return scene
+   }
 }
