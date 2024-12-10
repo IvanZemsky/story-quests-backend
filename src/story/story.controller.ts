@@ -30,21 +30,27 @@ export class StoryController {
     @Query('search') search: string = '',
     @Query('length') length: SortByScenesAmount = '',
     @Query('order') order: OrderByFilter = '',
+    @Query('only_count') onlyCount: boolean = false,
     @Res() res: Response,
   ) {
-    const stories = await this.storyService.getAllStories(
-      limit,
-      page,
-      search,
-      length,
-      order,
-    );
     const count = await this.storyService.getStoryCount(search, length);
 
     res.setHeader('X-Total-Count', count);
     res.setHeader('Access-Control-Expose-Headers', 'X-Total-Count');
 
-    return res.json(stories);
+    if (!onlyCount) {
+      const stories = await this.storyService.getAllStories(
+        limit,
+        page,
+        search,
+        length,
+        order,
+      );
+
+      return res.json(stories);
+    }
+
+    return res.json([]);
   }
 
   @ApiOperation({ summary: 'Получение истории по id' })
