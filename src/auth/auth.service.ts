@@ -1,55 +1,54 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/user/dto/createUser.dto';
-import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcryptjs';
-import { User } from 'src/user/user.schema';
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common"
+import { UserService } from "src/user/user.service"
+import { PasswordService } from "./password.service"
+import { JwtService } from "@nestjs/jwt"
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
-  ) {}
+   constructor(
+      private userService: UserService,
+      private passwordService: PasswordService,
+      private jwtService: JwtService,
+   ) {}
 
-  async registration(userDto: CreateUserDto) {
-    const candidate = await this.userService.getUserByLogin(userDto.login)
-    if (candidate) {
-       throw new HttpException('User with provided login already exists', HttpStatus.BAD_REQUEST)
-    }
-    const hashPassword = await bcrypt.hash(userDto.password, 5)
-    const user = await this.userService.createUser({login: userDto.login, password: hashPassword})
-    return this.generateToken(user)
- }
+   async signUp(login: string, password: string) {
+      const user = await this.userService.findByLogin(login)
 
-  async login(userDto: CreateUserDto) {
-    const user = await this.validateUser(userDto);
-    return this.generateToken(user);
-  }
+      if (user) {
+         throw new BadRequestException({ type: "login-exists" })
+      }
 
-  private generateToken(user: User) {
-    const payload = { login: user.login, _id: user._id };
-    return {
-      token: this.jwtService.sign(payload),
-    };
-  }
+      const salt = this.passwordService.getSalt()
+      const hash = this.passwordService.getHash(password, salt)
 
-  private async validateUser(userDto: CreateUserDto) {
-    const user = await this.userService.getUserByLogin(userDto.login);
+      const newUser = await this.userService.createUser(login, hash, salt)
 
-    if (!user) {
-      throw new UnauthorizedException({ message: 'Incorrect login or password' });
-    }
+      const accessToken = await this.jwtService.signAsync({
+         id: newUser._id,
+         login: newUser.login,
+      })
 
-    const passwordEquals = await bcrypt.compare(
-      userDto.password,
-      user.password,
-    );
+      return { accessToken }
+   }
 
-    if (user && passwordEquals) {
-      return user;
-    }
+   async signIn(login: string, password: string) {
+      const user = await this.userService.findByLogin(login)
 
-    throw new UnauthorizedException({ message: 'Incorrect login or password' });
-  }
+      if (!user) {
+         throw new UnauthorizedException()
+      }
+
+      const hash = this.passwordService.getHash(password, user.salt)
+
+      if (hash !== user.hash) {
+         throw new UnauthorizedException()
+      }
+
+      const accessToken = await this.jwtService.signAsync({
+         id: user._id,
+         login: user.login,
+      }, {secret: String(process.env.JWT_SECRET)})
+
+      return { accessToken }
+   }
 }
