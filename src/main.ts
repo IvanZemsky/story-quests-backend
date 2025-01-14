@@ -11,6 +11,7 @@ async function bootstrap() {
       "http://localhost:3000",
       "http://localhost:5000",
       "https://story-quests.vercel.app",
+      "https://story-quests-backend.onrender.com",
    ]
 
    app.use(cookieParser())
