@@ -22,7 +22,7 @@ export class StoryService {
 
       const sort = setOrderByFilter(order)
 
-      const skip = ((page - 1) && 0) * limit
+      const skip = (page > 0 ? page - 1 : 0) * limit
 
       const stories = await this.storyModel
          .find(query)
