@@ -20,12 +20,10 @@ async function bootstrap() {
       origin: (origin, callback) => {
          if (!origin) return callback(null, true)
 
-         const normalizedOrigin = origin.endsWith("/") ? origin.slice(0, -1) : origin
-
-         if (allowedOrigins.includes(normalizedOrigin)) {
+         if (allowedOrigins.includes(origin)) {
             callback(null, true)
          } else {
-            callback(new Error(`Origin "${origin}" not allowed by CORS`))
+            callback(new Error(`Origin "${origin}" not allowed by CORS`));
          }
       },
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",

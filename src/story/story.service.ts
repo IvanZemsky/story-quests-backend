@@ -35,7 +35,7 @@ export class StoryService {
    }
 
    async getStoryById(id: string) {
-      const story = await this.storyModel.findById(id)
+      const story = await this.storyModel.findById(id).populate("author", "login")
       return story
    }
 
