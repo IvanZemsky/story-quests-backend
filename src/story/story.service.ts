@@ -4,6 +4,7 @@ import { Model, QueryOptions } from "mongoose"
 import { OrderByFilter, SortByScenesAmount } from "./types/types"
 import { setSortByLength } from "./helpers/setSortByLength"
 import { setOrderByFilter } from "./helpers/setOrderByFilter"
+import { NotFoundException } from "@nestjs/common"
 
 export class StoryService {
    constructor(
@@ -53,6 +54,23 @@ export class StoryService {
             { name: { $regex: search, $options: "i" } },
          ],
          ...(sceneCountQuery && { sceneCount: sceneCountQuery }),
+      }
+   }
+
+   async updateStoryPasses(id: string) {
+      const story: Story | null = await this.storyModel.findByIdAndUpdate(
+         id,
+         { $inc: { passes: 1 } },
+         { new: true, useFindAndModify: false },
+      )
+
+      if (!story) {
+         throw new NotFoundException(`Story with ID "${id}" not found`)
+      }
+
+      return {
+         storyId: story._id,
+         passes: story.passes,
       }
    }
 }

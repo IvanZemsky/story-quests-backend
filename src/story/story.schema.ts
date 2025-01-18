@@ -9,7 +9,7 @@ export class Story {
       example: "66cb6fb8ebae2e4b8fffd190",
       description: "Уникальный идентификатор",
    })
-   private _id: string
+   _id: string
 
    @ApiProperty({
       example: "Mystery of the Ancient Temple",

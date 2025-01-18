@@ -1,9 +1,18 @@
-import { Controller, Get, NotFoundException, Param, Query, Res } from "@nestjs/common"
 import { StoryService } from "./story.service"
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger"
 import { Story } from "./story.schema"
 import { OrderByFilter, SortByScenesAmount } from "./types/types"
 import { Response } from "express"
+import {
+   Controller,
+   Get,
+   Res,
+   Param,
+   NotFoundException,
+   Patch,
+   HttpCode,
+   Query,
+} from "@nestjs/common"
 
 @ApiTags("Истории")
 @Controller("stories")
@@ -65,5 +74,17 @@ export class StoryController {
          throw new NotFoundException("Story not found")
       }
       return story
+   }
+
+   @ApiOperation({ summary: "Увеличение количества прохождений истории" })
+   @ApiResponse({
+      status: 200,
+      type: Story,
+   })
+   @Patch(":id/passes")
+   @HttpCode(200)
+   async updatePasses(@Param("id") id: string) {
+      const updatedPasses = await this.storyService.updateStoryPasses(id)
+      return updatedPasses
    }
 }
