@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { ApiProperty } from "@nestjs/swagger"
-import mongoose, { HydratedDocument } from "mongoose"
+import mongoose, { HydratedDocument, ObjectId } from "mongoose"
 import { IAnswer } from "./types/types"
 import { answersExample } from "./docs/docs"
 
@@ -10,7 +10,7 @@ export class Scene {
       description: "Уникальный идентификатор сцены в базе данных",
       example: "66d0d0c6a63f85b540d92934",
    })
-   _id: string
+   _id: ObjectId
 
    @ApiProperty({
       description: "Уникальный идентификатор сцены в истории",
@@ -24,7 +24,7 @@ export class Scene {
       example: "66cb6fb8ebae2e4b8fffd190",
    })
    @Prop({ type: mongoose.Schema.Types.ObjectId })
-   storyId: string
+   storyId: ObjectId
 
    @ApiProperty({
       description: "Заголовок сцены",
