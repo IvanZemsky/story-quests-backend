@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { CookieService } from './cookie.service'; // Предполагается, что CookieService находится в файле cookie.service.ts
+import { CookieService } from './cookie.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

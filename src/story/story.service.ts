@@ -93,8 +93,6 @@ export class StoryService {
    }
 
    async toggleLike(storyId: string, userId: string) {
-      console.log("userId", userId)
-
       const story = await this.storyModel.findById(storyId)
 
       if (!story) {
@@ -116,8 +114,6 @@ export class StoryService {
       }
 
       await story.save()
-
-      console.log("updated-story", story)
 
       return {
          storyId: story._id,
