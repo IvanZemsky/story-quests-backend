@@ -17,7 +17,8 @@ export class StoryService {
       search: string,
       length: SortByScenesAmount,
       order: OrderByFilter,
-      userId: string | undefined,
+      userId?: string ,
+      byUser?: string,
       limit: number = 0,
       page?: number,
    ): Promise<LikedStoryDto[]> {
@@ -63,7 +64,7 @@ export class StoryService {
       return await this.storyModel.countDocuments(query).exec()
    }
 
-   private setQuery(search: string, length: SortByScenesAmount): QueryOptions {
+   private setQuery(search: string, length: SortByScenesAmount, byUser?: string): QueryOptions {
       const sceneCountQuery = setSortByLength(length)
 
       return {
@@ -72,6 +73,7 @@ export class StoryService {
             { name: { $regex: search, $options: "i" } },
          ],
          ...(sceneCountQuery && { sceneCount: sceneCountQuery }),
+         ...(byUser && { author: byUser })
       }
    }
 

@@ -1,12 +1,24 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common"
+import {  Controller, Get, Param, Query, } from "@nestjs/common"
 import { UserService } from "./user.service"
-import { ApiOperation, ApiResponse } from "@nestjs/swagger"
-import { CreateUserDto } from "./dto/createUser.dto"
-import { User } from "./user.schema"
+import { } from "@nestjs/swagger"
 
 @Controller("users")
 export class UserController {
    constructor(private userService: UserService) {}
+
+   @Get(":id")
+   async getUserById(@Param("id") id: string) {
+      const user = await this.userService.findById(id)
+      
+      if (user) {
+         return {
+            id: user._id,
+            login: user.login,
+         }
+      }
+
+      return null
+   }
 
    async getUserByLogin(@Query() login: string) {
       const user = await this.userService.findByLogin(login)

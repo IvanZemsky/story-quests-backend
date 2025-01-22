@@ -23,9 +23,7 @@ import { SessionInterceptor } from "src/auth/sessionInterseptor"
 @ApiTags("Истории")
 @Controller("stories")
 export class StoryController {
-   constructor(
-      private storyService: StoryService,
-   ) {}
+   constructor(private storyService: StoryService) {}
 
    @ApiOperation({ summary: "Получение всех историй (без сцен)" })
    @ApiResponse({
@@ -40,12 +38,12 @@ export class StoryController {
          },
       },
    })
-   @ApiQuery({name: "limit", required: false}) 
-   @ApiQuery({name: "page", required: false}) 
-   @ApiQuery({name: "search", required: false}) 
-   @ApiQuery({name: "length", required: false}) 
-   @ApiQuery({name: "order", required: false}) 
-   @ApiQuery({name: "only_count", required: false})
+   @ApiQuery({ name: "limit", required: false })
+   @ApiQuery({ name: "page", required: false })
+   @ApiQuery({ name: "search", required: false })
+   @ApiQuery({ name: "length", required: false })
+   @ApiQuery({ name: "order", required: false })
+   @ApiQuery({ name: "only_count", required: false })
    @UseInterceptors(SessionInterceptor)
    @Get()
    async getStories(
@@ -56,6 +54,7 @@ export class StoryController {
       @Query("search") search: string = "",
       @Query("length") length: SortByScenesAmount = "",
       @Query("order") order: OrderByFilter = "",
+      @Query("by_user") byUser?: string,
       @Query("only_count") onlyCount: boolean = false,
    ) {
       const userId = session?.id
@@ -70,6 +69,7 @@ export class StoryController {
             length,
             order,
             userId,
+            byUser,
             limit,
             page,
          )
@@ -87,7 +87,10 @@ export class StoryController {
    })
    @UseInterceptors(SessionInterceptor)
    @Get(":id")
-   async getStoryById(@Param("id") id: string, @SessionInfo() session: GetSessionInfoDto,) {
+   async getStoryById(
+      @Param("id") id: string,
+      @SessionInfo() session: GetSessionInfoDto,
+   ) {
       const userId = session?.id
       const story = await this.storyService.getStoryById(id, userId)
       if (!story) {
@@ -109,7 +112,10 @@ export class StoryController {
    @ApiResponse({ status: 200 })
    @Patch(":id/like")
    @UseGuards(AuthGuard)
-   async toggleLike(@Param("id") storyId: string, @SessionInfo() session: GetSessionInfoDto) {
+   async toggleLike(
+      @Param("id") storyId: string,
+      @SessionInfo() session: GetSessionInfoDto,
+   ) {
       const userId = session.id
       const res = await this.storyService.toggleLike(storyId, userId)
       return res
