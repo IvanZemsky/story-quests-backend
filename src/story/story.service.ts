@@ -22,7 +22,7 @@ export class StoryService {
       limit: number = 0,
       page?: number,
    ): Promise<LikedStoryDto[]> {
-      const query = this.setQuery(search, length)
+      const query = this.setQuery(search, length, byUser)
 
       const sort = setOrderByFilter(order)
 
@@ -101,7 +101,7 @@ export class StoryService {
          throw new NotFoundException(`Story with ID "${storyId}" not found`)
       }
 
-      const existingLike = await this.storyLikeModel.findOne({ storyId })
+      const existingLike = await this.storyLikeModel.findOne({ storyId, userId })
 
       let isLiked: boolean | null = null
 

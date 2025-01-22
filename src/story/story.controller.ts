@@ -54,7 +54,7 @@ export class StoryController {
       @Query("search") search: string = "",
       @Query("length") length: SortByScenesAmount = "",
       @Query("order") order: OrderByFilter = "",
-      @Query("by_user") byUser?: string,
+      @Query("byUser") byUser?: string,
       @Query("only_count") onlyCount: boolean = false,
    ) {
       const userId = session?.id
