@@ -3,6 +3,7 @@ import { ApiProperty } from "@nestjs/swagger"
 import mongoose, { HydratedDocument, ObjectId } from "mongoose"
 import { IAnswer } from "./types/types"
 import { answersExample } from "./docs/docs"
+import { Story } from "src/story/schemas/story.schema"
 
 @Schema({ collection: "scenes", versionKey: false })
 export class Scene {
@@ -24,7 +25,7 @@ export class Scene {
       example: "66cb6fb8ebae2e4b8fffd190",
    })
    @Prop({ type: mongoose.Schema.Types.ObjectId })
-   storyId: ObjectId
+   storyId: Story
 
    @ApiProperty({
       description: "Заголовок сцены",

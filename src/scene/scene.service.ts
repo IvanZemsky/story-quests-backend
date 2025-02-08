@@ -7,16 +7,29 @@ import { Model } from "mongoose"
 export class SceneService {
    constructor(
       @InjectModel(Scene.name)
-      private sceneRepository: Model<Scene>,
+      private sceneModel: Model<Scene>,
    ) {}
 
    async getScenesByStoryId(storyId: string) {
-      const scenes = await this.sceneRepository.find({ storyId })
+      const scenes = await this.sceneModel.find({ storyId })
       return scenes
    }
 
-   async getScene(storyId: string, nextSceneId: string) {
-      const scene = await this.sceneRepository.findOne({ storyId, sceneId: nextSceneId })
+   async getScene(searchParams: {
+      _id?: string
+      storyId?: string
+      nextSceneId?: string
+      sceneId?: string
+   }) {
+      const query = {}
+
+      for (const key in searchParams) {
+         if (searchParams[key]) {
+            query[key] = searchParams[key]
+         }
+      }
+
+      const scene = await this.sceneModel.findOne(query).lean()
       return scene
    }
 }

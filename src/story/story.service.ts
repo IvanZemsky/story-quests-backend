@@ -1,23 +1,26 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { Story } from "./story.schema"
+import { Story } from "./schemas/story.schema"
 import { Model, QueryOptions } from "mongoose"
 import { LikedStoryDto, OrderByFilter, SortByScenesAmount } from "./types/types"
 import { setSortByLength } from "./helpers/setSortByLength"
 import { setOrderByFilter } from "./helpers/setOrderByFilter"
 import { NotFoundException } from "@nestjs/common"
 import { StoryLike } from "./storyLike.schema"
+import { CreateStoryResultDto } from "./story.dto"
+import { StoryResult } from "./schemas/storyResult.schema"
 
 export class StoryService {
    constructor(
       @InjectModel(Story.name) private storyModel: Model<Story>,
       @InjectModel(StoryLike.name) private storyLikeModel: Model<StoryLike>,
+      @InjectModel(StoryResult.name) private storyResultModel: Model<StoryResult>,
    ) {}
 
    async getAllStories(
       search: string,
       length: SortByScenesAmount,
       order: OrderByFilter,
-      userId?: string ,
+      userId?: string,
       byUser?: string,
       limit: number = 0,
       page?: number,
@@ -49,14 +52,21 @@ export class StoryService {
    }
 
    async getStoryById(storyId: string, userId: string | undefined) {
-      const story = await this.storyModel.findById(storyId).populate("author", "login").lean()
+      const story = await this.storyModel
+         .findById(storyId)
+         .populate("author", "login")
+         .lean()
+
+      if (!story) {
+         return null
+      }
 
       if (userId) {
          const like = await this.storyLikeModel.findOne({ storyId, userId })
          return { ...story, isLiked: like ? true : false }
       }
 
-      return {...story, isLiked: false}
+      return { ...story, isLiked: false }
    }
 
    async getStoryCount(search: string, length: SortByScenesAmount): Promise<number> {
@@ -64,7 +74,11 @@ export class StoryService {
       return await this.storyModel.countDocuments(query).exec()
    }
 
-   private setQuery(search: string, length: SortByScenesAmount, byUser?: string): QueryOptions {
+   private setQuery(
+      search: string,
+      length: SortByScenesAmount,
+      byUser?: string,
+   ): QueryOptions {
       const sceneCountQuery = setSortByLength(length)
 
       return {
@@ -73,7 +87,7 @@ export class StoryService {
             { name: { $regex: search, $options: "i" } },
          ],
          ...(sceneCountQuery && { sceneCount: sceneCountQuery }),
-         ...(byUser && { author: byUser })
+         ...(byUser && { author: byUser }),
       }
    }
 
@@ -122,5 +136,34 @@ export class StoryService {
          likes: story.likes,
          isLiked,
       }
+   }
+
+   async getUserResult({ storyId, userId }: { storyId: string; userId: string }) {
+      const storyResult = await this.storyResultModel
+         .findOne({
+            storyId,
+            userId,
+         }).lean()
+
+
+      return storyResult
+   }
+
+   async setResult({ id, userId, resultSceneId }: CreateStoryResultDto & { id: string }) {
+      const story = await this.storyResultModel.findOne({ storyId: id, userId })
+
+      const data = {
+         storyId: id,
+         userId,
+         resultSceneId,
+      }
+
+      if (story) {
+         return await this.storyResultModel.findByIdAndUpdate(story._id, data, {
+            new: true,
+         })
+      }
+
+      return await this.storyResultModel.create(data)
    }
 }

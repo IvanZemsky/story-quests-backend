@@ -1,6 +1,6 @@
 import { StoryService } from "./story.service"
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger"
-import { Story } from "./story.schema"
+import { Story } from "./schemas/story.schema"
 import { OrderByFilter, SortByScenesAmount } from "./types/types"
 import { Response } from "express"
 import {
@@ -14,16 +14,23 @@ import {
    Query,
    UseGuards,
    UseInterceptors,
+   Body,
+   Put,
 } from "@nestjs/common"
 import { AuthGuard } from "src/auth/auth.guard"
 import { GetSessionInfoDto } from "src/auth/dto"
 import { SessionInfo } from "src/auth/sessionInfoDecorator"
 import { SessionInterceptor } from "src/auth/sessionInterseptor"
+import { CreateStoryResultDto } from "./story.dto"
+import { SceneService } from "src/scene/scene.service"
 
 @ApiTags("Истории")
 @Controller("stories")
 export class StoryController {
-   constructor(private storyService: StoryService) {}
+   constructor(
+      private storyService: StoryService,
+      private sceneService: SceneService,
+   ) {}
 
    @ApiOperation({ summary: "Получение всех историй (без сцен)" })
    @ApiResponse({
@@ -108,7 +115,7 @@ export class StoryController {
       return updatedPasses
    }
 
-   @ApiOperation({ summary: "Добавление лайка" })
+   @ApiOperation({ summary: "Переключение лайка" })
    @ApiResponse({ status: 200 })
    @Patch(":id/like")
    @UseGuards(AuthGuard)
@@ -118,6 +125,26 @@ export class StoryController {
    ) {
       const userId = session.id
       const res = await this.storyService.toggleLike(storyId, userId)
+      return res
+   }
+
+   @Get(":id/results/:userId")
+   async getUserResult(@Param("id") storyId: string, @Param("userId") userId: string) {
+      const res = await this.storyService.getUserResult({ storyId, userId })
+
+      if (!res) {
+         throw new NotFoundException("result-not-found")
+      }
+
+      const scene = await this.sceneService.getScene({storyId, sceneId: res.resultSceneId})
+
+      return {...res, scene}
+   }
+
+   @Put(":id/results")
+   //@UseGuards(AuthGuard)
+   async setResult(@Body() body: CreateStoryResultDto, @Param("id") id: string) {
+      const res = await this.storyService.setResult({ id, ...body })
       return res
    }
 }

@@ -8,5 +8,6 @@ import { Scene, SceneSchema } from "./scene.schema"
    imports: [MongooseModule.forFeature([{ name: Scene.name, schema: SceneSchema }])],
    providers: [SceneService],
    controllers: [SceneController],
+   exports: [SceneService],
 })
 export class ScenesModule {}

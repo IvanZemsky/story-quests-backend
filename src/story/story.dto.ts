@@ -11,9 +11,15 @@ export interface IScene {
    answers: IAnswer[]
 }
 
-export class CreateStoryDto {
+export type CreateStoryDto = {
    readonly name: string
    readonly description: string
    readonly img: string
    readonly scenes: IScene[]
+}
+
+export type CreateStoryResultDto = {
+   readonly userId: string
+   readonly resultSceneId: string
+   readonly datetime: string
 }
