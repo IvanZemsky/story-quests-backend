@@ -32,4 +32,18 @@ export class SceneService {
       const scene = await this.sceneModel.findOne(query).lean()
       return scene
    }
+
+   async getEndScenes(storyId: string) {
+      const scenes = await this.sceneModel.find({ storyId, type: "end" })
+      return scenes
+   }
+
+   async incrementPasses(storyId: string, sceneId: string) {
+      const scene = await this.sceneModel.findOneAndUpdate(
+         { storyId, sceneId },
+         { $inc: { passes: 1 } },
+         { new: true },
+      )
+      return scene
+   }
 }

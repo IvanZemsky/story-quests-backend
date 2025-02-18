@@ -62,6 +62,13 @@ export class Scene {
    })
    @Prop()
    answers: IAnswer[]
+
+   @ApiProperty({
+      description: "Количество прохождений для сцены с типом end",
+      example: 99,
+   })
+   @Prop()
+   passes?: number
 }
 
 export type SceneDocument = HydratedDocument<Scene>

@@ -136,13 +136,16 @@ export class StoryController {
          throw new NotFoundException("result-not-found")
       }
 
-      const scene = await this.sceneService.getScene({storyId, sceneId: res.resultSceneId})
+      const scene = await this.sceneService.getScene({
+         storyId,
+         sceneId: res.resultSceneId,
+      })
 
-      return {...res, scene}
+      return { ...res, scene }
    }
 
    @Put(":id/results")
-   //@UseGuards(AuthGuard)
+   @UseGuards(AuthGuard)
    async setResult(@Body() body: CreateStoryResultDto, @Param("id") id: string) {
       const res = await this.storyService.setResult({ id, ...body })
       return res

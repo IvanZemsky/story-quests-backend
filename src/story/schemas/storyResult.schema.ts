@@ -19,7 +19,7 @@ export class StoryResult {
    @Prop({ required: true, ref: "Story", type: mongoose.Schema.Types.ObjectId })
    storyId: Story
 
-   @Prop({required: true})
+   @Prop({ required: true })
    datetime: Date
 }
 

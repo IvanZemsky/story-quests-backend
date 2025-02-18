@@ -149,13 +149,14 @@ export class StoryService {
       return storyResult
    }
 
-   async setResult({ id, userId, resultSceneId }: CreateStoryResultDto & { id: string }) {
+   async setResult({ id, userId, resultSceneId, datetime }: CreateStoryResultDto & { id: string }) {
       const story = await this.storyResultModel.findOne({ storyId: id, userId })
 
       const data = {
          storyId: id,
          userId,
          resultSceneId,
+         datetime,
       }
 
       if (story) {
