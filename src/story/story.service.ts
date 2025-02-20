@@ -143,17 +143,22 @@ export class StoryService {
          .findOne({
             storyId,
             userId,
-         }).lean()
-
+         })
+         .lean()
 
       return storyResult
    }
 
-   async setResult({ id, userId, resultSceneId, datetime }: CreateStoryResultDto & { id: string }) {
-      const story = await this.storyResultModel.findOne({ storyId: id, userId })
+   async setResult({
+      storyId,
+      userId,
+      resultSceneId,
+      datetime,
+   }: CreateStoryResultDto & { storyId: string, userId: string }) {
+      const story = await this.storyResultModel.findOne({ storyId, userId })
 
       const data = {
-         storyId: id,
+         storyId,
          userId,
          resultSceneId,
          datetime,

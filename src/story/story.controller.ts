@@ -1,6 +1,4 @@
 import { StoryService } from "./story.service"
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger"
-import { Story } from "./schemas/story.schema"
 import { OrderByFilter, SortByScenesAmount } from "./types/types"
 import { Response } from "express"
 import {
@@ -10,7 +8,6 @@ import {
    Param,
    NotFoundException,
    Patch,
-   HttpCode,
    Query,
    UseGuards,
    UseInterceptors,
@@ -24,7 +21,6 @@ import { SessionInterceptor } from "src/auth/sessionInterseptor"
 import { CreateStoryResultDto } from "./story.dto"
 import { SceneService } from "src/scene/scene.service"
 
-@ApiTags("Истории")
 @Controller("stories")
 export class StoryController {
    constructor(
@@ -32,26 +28,6 @@ export class StoryController {
       private sceneService: SceneService,
    ) {}
 
-   @ApiOperation({ summary: "Получение всех историй (без сцен)" })
-   @ApiResponse({
-      status: 200,
-      type: [Story],
-      headers: {
-         "X-Total-Count": {
-            description: "Общее количество историй",
-            schema: {
-               type: "number",
-            },
-         },
-      },
-   })
-   @ApiQuery({ name: "limit", required: false })
-   @ApiQuery({ name: "page", required: false })
-   @ApiQuery({ name: "search", required: false })
-   @ApiQuery({ name: "length", required: false })
-   @ApiQuery({ name: "order", required: false })
-   @ApiQuery({ name: "only_count", required: false })
-   @UseInterceptors(SessionInterceptor)
    @Get()
    async getStories(
       @Res() res: Response,
@@ -61,7 +37,7 @@ export class StoryController {
       @Query("search") search: string = "",
       @Query("length") length: SortByScenesAmount = "",
       @Query("order") order: OrderByFilter = "",
-      @Query("byUser") byUser?: string,
+      @Query("by_user") byUser?: string,
       @Query("only_count") onlyCount: boolean = false,
    ) {
       const userId = session?.id
@@ -87,40 +63,32 @@ export class StoryController {
       return res.json([])
    }
 
-   @ApiOperation({ summary: "Получение истории по id" })
-   @ApiResponse({
-      status: 200,
-      type: Story,
-   })
    @UseInterceptors(SessionInterceptor)
-   @Get(":id")
+   @Get(":storyId")
    async getStoryById(
-      @Param("id") id: string,
+      @Param("storyId") storyId: string,
       @SessionInfo() session: GetSessionInfoDto,
    ) {
       const userId = session?.id
-      const story = await this.storyService.getStoryById(id, userId)
+      const story = await this.storyService.getStoryById(storyId, userId)
+
       if (!story) {
-         throw new NotFoundException("Story not found")
+         throw new NotFoundException()
       }
+
       return story
    }
 
-   @ApiOperation({ summary: "Увеличение количества прохождений истории" })
-   @ApiResponse({ status: 200 })
-   @Patch(":id/passes")
-   @HttpCode(200)
-   async updatePasses(@Param("id") id: string) {
-      const updatedPasses = await this.storyService.updatePasses(id)
+   @Patch(":storyId/passes")
+   async updatePasses(@Param("storyId") storyId: string) {
+      const updatedPasses = await this.storyService.updatePasses(storyId)
       return updatedPasses
    }
 
-   @ApiOperation({ summary: "Переключение лайка" })
-   @ApiResponse({ status: 200 })
-   @Patch(":id/like")
+   @Patch(":storyId/like")
    @UseGuards(AuthGuard)
    async toggleLike(
-      @Param("id") storyId: string,
+      @Param("storyId") storyId: string,
       @SessionInfo() session: GetSessionInfoDto,
    ) {
       const userId = session.id
@@ -128,26 +96,61 @@ export class StoryController {
       return res
    }
 
-   @Get(":id/results/:userId")
-   async getUserResult(@Param("id") storyId: string, @Param("userId") userId: string) {
+   @Get(":storyId/results/:userId")
+   async getUserResult(
+      @Param("storyId") storyId: string,
+      @Param("userId") userId: string,
+   ) {
       const res = await this.storyService.getUserResult({ storyId, userId })
 
       if (!res) {
-         throw new NotFoundException("result-not-found")
+         throw new NotFoundException()
       }
 
       const scene = await this.sceneService.getScene({
          storyId,
-         sceneId: res.resultSceneId,
+         number: res.resultSceneId,
       })
 
       return { ...res, scene }
    }
 
-   @Put(":id/results")
+   @Put(":storyId/results/:userId")
    @UseGuards(AuthGuard)
-   async setResult(@Body() body: CreateStoryResultDto, @Param("id") id: string) {
-      const res = await this.storyService.setResult({ id, ...body })
+   async setResult(
+      @Body() body: CreateStoryResultDto,
+      @Param("storyId") storyId: string,
+      @Param("userId") userId: string,
+   ) {
+      const res = await this.storyService.setResult({ storyId, userId, ...body })
       return res
+   }
+
+   @Get(":storyId/scenes")
+   async getScenesByStoryId(@Param("storyId") storyId: string) {
+      return await this.sceneService.getScenesByStoryId(storyId)
+   }
+
+   @Get(":storyId/scenes/:sceneNumber")
+   async getScene(
+      @Param("storyId") storyId: string,
+      @Param("sceneNumber") sceneNumber: string,
+   ) {
+      const res = await this.sceneService.getScene({ storyId, number: sceneNumber })
+      return res
+   }
+
+   @Patch(":storyId/passes/:sceneId")
+   async incrementPasses(
+      @Param("storyId") storyId: string,
+      @Param("sceneId") sceneId: string,
+   ) {
+      return await this.sceneService.incrementPasses(storyId, sceneId)
+   }
+
+   @Get(":storyId/results")
+   async getStatistics(@Param("storyId") storyId: string) {
+      const endScenes = await this.sceneService.getEndScenes(storyId)
+      return endScenes
    }
 }

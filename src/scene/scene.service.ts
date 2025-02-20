@@ -15,21 +15,8 @@ export class SceneService {
       return scenes
    }
 
-   async getScene(searchParams: {
-      _id?: string
-      storyId?: string
-      nextSceneId?: string
-      sceneId?: string
-   }) {
-      const query = {}
-
-      for (const key in searchParams) {
-         if (searchParams[key]) {
-            query[key] = searchParams[key]
-         }
-      }
-
-      const scene = await this.sceneModel.findOne(query).lean()
+   async getScene(searchParams: { storyId?: string; number?: string }) {
+      const scene = await this.sceneModel.findOne(searchParams).lean()
       return scene
    }
 
@@ -38,9 +25,9 @@ export class SceneService {
       return scenes
    }
 
-   async incrementPasses(storyId: string, sceneId: string) {
+   async incrementPasses(storyId: string, sceneNumber: string) {
       const scene = await this.sceneModel.findOneAndUpdate(
-         { storyId, sceneId },
+         { storyId, sceneNumber },
          { $inc: { passes: 1 } },
          { new: true },
       )
